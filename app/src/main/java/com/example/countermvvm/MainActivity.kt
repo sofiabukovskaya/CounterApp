@@ -3,6 +3,7 @@ package com.example.countermvvm
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,13 +19,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.countermvvm.ui.theme.CounterMVVMTheme
@@ -33,13 +30,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val viewModel: CounterViewModel by viewModels()
             CounterMVVMTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TheCounterApp()
+                    TheCounterApp(viewModel)
                 }
             }
         }
@@ -47,18 +45,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TheCounterApp() {
-    val count = remember {
-        mutableIntStateOf(0)
-    }
-
-    fun increment() {
-        count.intValue++
-    }
-
-    fun decrement() {
-        count.intValue--
-    }
+fun TheCounterApp(viewModel: CounterViewModel) {
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -66,19 +53,19 @@ fun TheCounterApp() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Count ${count.intValue}",
+            text = "Count ${viewModel.count.value}",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row {
-            Button(onClick = { increment() }) {
+            Button(onClick = { viewModel.increment() }) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = null)
                     Text(text = "Increment")
                 }
             }
-            Button(onClick = { decrement() }) {
+            Button(onClick = { viewModel.decrement() }) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(imageVector = Icons.Default.Clear, contentDescription = null)
                     Text(text = "Decrement")
